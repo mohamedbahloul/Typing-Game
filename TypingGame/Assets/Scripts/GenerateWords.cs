@@ -23,22 +23,40 @@ public class GenerateWords : MonoBehaviour
     {
         if (Input.anyKeyDown)
         {
-            if(word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().text == Input.inputString)
+            if (!Input.GetKeyDown(KeyCode.Delete))
             {
-                word.transform.GetChild(currentPlaceInWord).GetComponent<Image>().color = Color.green;
-                correctChar++;
+                if (Words[currentWordId].Substring(currentPlaceInWord,1)  == Input.inputString)
+                {
+                    word.transform.GetChild(currentPlaceInWord).GetComponent<Image>().color = Color.green;
+                    correctChar++;
+                }
+                else
+                {
+                    word.transform.GetChild(currentPlaceInWord).GetComponent<Image>().color = Color.red;
+                }
+                word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().text = Input.inputString;
+                currentPlaceInWord++;
+                if ((currentPlaceInWord == Words[currentWordId].Length) && (correctChar == Words[currentWordId].Length))
+                {
+                    correctChar = 0;
+                    currentWordId++;
+                    StartCoroutine(newWord());
+                }
             }
             else
             {
-                word.transform.GetChild(currentPlaceInWord).GetComponent<Image>().color = Color.red;
-            }
-            word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().text = Input.inputString;
-            currentPlaceInWord++;
-            if ((currentPlaceInWord == Words[currentWordId].Length)&&(correctChar== Words[currentWordId].Length))
-            {
-                correctChar = 0;
-                currentWordId++;
-                StartCoroutine(newWord());
+                if (currentPlaceInWord != 0)
+                {
+                    currentPlaceInWord--;
+                    if (word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().text == Words[currentWordId].Substring(currentPlaceInWord, 1))
+                    {
+                        correctChar--;
+                        Debug.Log(correctChar);
+                    }
+                    word.transform.GetChild(currentPlaceInWord).GetComponent<Image>().color = Color.gray;
+                    word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().text = Words[currentWordId].Substring(currentPlaceInWord, 1);
+                    
+                }
             }
         }
     }
