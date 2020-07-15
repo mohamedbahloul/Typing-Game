@@ -11,34 +11,56 @@ public class GenerateWords : MonoBehaviour
     private byte currentWordId = 0;
     private byte currentPlaceInWord = 0;
     private byte correctChar=0;
+    public GameObject key;
+    public GameObject keyBoard;
+    public GameObject ChangeLangBtn;
+    private GameObject ChangeLangBtn_;
+    private string azerty = "azertyuiopqsdfghjklmwxcvbn";
+    private string querty = "qwertyuiopasdfghjklmzxcvbn";
+    public string selectedLang;
+    [SerializeField]
+    public static string data1;
     void Start()
     {
-
+        selectedLang = azerty;
         StartCoroutine(newWord());
+        instatiateKeyboard();
+        SaveSystem.SaveDic();
 
     }
 
     // Update is called once per frame
-    void Update()
+
+    private void instatiateKeyboard()
     {
-        if (Input.anyKeyDown)
+        for (int i = 0; i < selectedLang.Length; i++)
         {
-                if (Words[currentWordId].Substring(currentPlaceInWord,1)  == Input.inputString)
-                {
-                word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().color = Color.green;
-                correctChar++;
-                }
-                else
-                {
-                word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().color = Color.red;
-                }
-                word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().text = Words[currentWordId].Substring(currentPlaceInWord, 1);
-                currentPlaceInWord++;
-                if (currentPlaceInWord == Words[currentWordId].Length)
-                {
-                    currentWordId++;
-                    StartCoroutine(newWord());
-                }
+            GameObject go = Instantiate(key, keyBoard.transform);
+            go.GetComponentInChildren<TextMeshProUGUI>().text = selectedLang.Substring(i, 1);
+            addlistenerKeyboards(go, selectedLang.Substring(i, 1));
+        }
+    }
+    public void addlistenerKeyboards(GameObject go, string ch)
+    {
+        go.GetComponent<Button>().onClick.AddListener(() => onKeyClick(ch));
+    }
+    public void onKeyClick(string ch)
+    {
+        if (Words[currentWordId].Substring(currentPlaceInWord, 1) == ch)
+        {
+            word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().color = Color.green;
+            correctChar++;
+        }
+        else
+        {
+            word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().color = Color.red;
+        }
+        word.transform.GetChild(currentPlaceInWord).GetChild(0).GetComponent<TextMeshProUGUI>().text = Words[currentWordId].Substring(currentPlaceInWord, 1);
+        currentPlaceInWord++;
+        if (currentPlaceInWord == Words[currentWordId].Length)
+        {
+            currentWordId++;
+            StartCoroutine(newWord());
         }
     }
 
